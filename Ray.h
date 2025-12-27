@@ -13,7 +13,7 @@ public:
 
 	//ray is function P(t)=A+tb
 	//where P is a 3D position along a line in 3D. A is the ray origin and b is the ray direction
-	point3 at(double t)
+	const point3 At (double t) const
 	{
 		return orig + t * dir;
 	}

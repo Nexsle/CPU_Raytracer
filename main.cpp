@@ -1,14 +1,23 @@
-#include <iostream>
-#include "Vec3.h"
-#include "Ray.h"
-#include "Color.h"
+#include "rtweekend.h"
 
-color RayColor(const ray& r)
+#include "Hittable.h"
+#include "Hittable_List.h"
+#include "Sphere.h"
+
+
+color RayColor(const ray& r, const hittable& world)
 {
+	hitRecord rec;
+	if (world.hit(r, interval(0, +infinity), rec))
+		return 0.5 * (rec.normal + color(1, 1, 1)); //visuallise normals as color
+
+	//Sky gradient if no hit
 	vec3 unitDirection = UnitVector(r.Direction());
 	auto a = 0.5 * (unitDirection.y() + 1.0f);
 	return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
 }
+
+
 
 int main() 
 {
@@ -18,6 +27,11 @@ int main()
 	int imageHeight = int(imageWidth / aspectRatio);
 	imageHeight = imageHeight < 1 ? 1 : imageHeight;
 
+
+	//World
+	hittableList world;
+	world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
+	world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
 
 
 	//Camera
@@ -44,14 +58,11 @@ int main()
 		std::clog << "\rScanline remaining: " << (imageHeight - i) << ' ' << std::flush;
 		for (int j = 0; j < imageWidth; j++)
 		{
-
-
-
 			auto pixelCenter = pixel00Loc + (i * pixelDeltaV) + (j * pixelDeltaU);
 			auto rayDirection = pixelCenter - cameraCenter;
 			ray r(cameraCenter, rayDirection);
 
-			color pixelColor = RayColor(r);
+			color pixelColor = RayColor(r, world);
 			WriteColor(std::cout, pixelColor);
 		}
 	}
