@@ -7,6 +7,7 @@ public:
 	double aspectRatio = 1.0;
 	int imageWidth = 100;
 	int samplePerPixel = 10; //num of random sample per pixel
+	int maxDepth = 10; //max num of ray bounces
 
 	void Render(const hittable& world)
 	{
@@ -23,7 +24,7 @@ public:
 				for (int sample = 0; sample < samplePerPixel; sample++)
 				{
 					ray r = GetRay(i, j);
-					pixelColor += RayColor(r, world);
+					pixelColor += RayColor(r,maxDepth, world);
 				}
 
 				WriteColor(std::cout, pixelColor * pixelSampleScale);
@@ -66,14 +67,21 @@ private:
 		pixel00Loc = viewportUpperLeft + 0.5 * (pixelDeltaU + pixelDeltaV);
 	}
 
-	color RayColor(const ray& ray, const hittable& world)const
+	color RayColor(const ray& r,int depth, const hittable& world)const
 	{
+		if (depth <= 0)
+			return color(0, 0, 0);
+
 		hitRecord rec;
-		if (world.hit(ray, interval(0, +infinity), rec))
-			return 0.5 * (rec.normal + color(1, 1, 1)); //visuallise normals as color
+		if (world.hit(r, interval(0.001, +infinity), rec))
+		{
+			vec3 direction = rec.normal + RandomUnitVector();
+			return 0.5 * RayColor(ray(rec.p, direction), depth-1, world);
+		}
+
 
 		//Sky gradient if no hit
-		vec3 unitDirection = UnitVector(ray.Direction());
+		vec3 unitDirection = UnitVector(r.Direction());
 		auto a = 0.5 * (unitDirection.y() + 1.0f);
 		return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
 	}

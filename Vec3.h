@@ -47,6 +47,16 @@ public:
 	{
 		return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 	}
+
+	static vec3 random()
+	{
+		return vec3(RandomDouble(), RandomDouble(), RandomDouble());
+	}
+
+	static vec3 random(double min, double max)
+	{
+		return vec3(RandomDouble(min ,max), RandomDouble(min, max), RandomDouble(min, max));
+	}
 };
 
 //setting an alias for vec3, usefull for geometric clarity
@@ -107,4 +117,24 @@ inline vec3 Cross(const vec3& u, const vec3& v)
 inline vec3 UnitVector(const vec3& v)
 {
 	return v / v.Length();
+}
+
+inline vec3 RandomUnitVector()
+{
+	while (true)
+	{
+		auto p = vec3::random(-1, 1);
+		auto lensq = p.LengthSquared();
+		if (1e-160 < lensq && lensq <= 1)
+			return p / sqrt(lensq);
+	}
+}
+
+inline vec3 RandomOnHemisphere(const vec3& normal)
+{
+	vec3 onUnitSphere = RandomUnitVector();
+	if (Dot(onUnitSphere, normal) > 0.0) // same side as normals
+		return onUnitSphere;
+	else
+		return -onUnitSphere;
 }
