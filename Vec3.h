@@ -57,6 +57,12 @@ public:
 	{
 		return vec3(RandomDouble(min ,max), RandomDouble(min, max), RandomDouble(min, max));
 	}
+
+	bool NearZero() const
+	{
+		auto s = 1e-18;
+		return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);
+	}
 };
 
 //setting an alias for vec3, usefull for geometric clarity
@@ -137,4 +143,9 @@ inline vec3 RandomOnHemisphere(const vec3& normal)
 		return onUnitSphere;
 	else
 		return -onUnitSphere;
+}
+
+inline vec3 Reflect(const vec3& v, const vec3& n)
+{
+	return v - 2 * Dot(v, n) * n;
 }
