@@ -149,3 +149,22 @@ inline vec3 Reflect(const vec3& v, const vec3& n)
 {
 	return v - 2 * Dot(v, n) * n;
 }
+
+inline vec3 Refract(const vec3& uv, const vec3& n, double etaI_over_etaT)
+{
+	auto cosTheta = std::fmin(Dot(-uv, n), 1.0);
+	vec3 rOutPerp = etaI_over_etaT * (uv + cosTheta * n);
+	vec3 rOutParallel = -std::sqrt(std::fabs(1.0 - rOutPerp.LengthSquared())) * n;
+
+	return rOutPerp + rOutParallel;
+}
+
+inline vec3 RandomInUnitDisk()
+{
+	while (true)
+	{
+		auto p = vec3(RandomDouble(-1, 1), RandomDouble(-1, 1), 0);
+		if (p.LengthSquared() < 1)
+			return p;
+	}
+}

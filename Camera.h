@@ -10,6 +10,14 @@ public:
 	int samplePerPixel = 10; //num of random sample per pixel
 	int maxDepth = 10; //max num of ray bounces
 
+	double vFov = 90; //vertical view angle
+	point3 lookFrom = point3(0, 0, 0);
+	point3 lookAt = point3(0, 0, -1);
+	vec3 viewUp = vec3(0, 1, 0);
+
+	double defocusAngle = 0;
+	double focusDist = 10; //distance from cam to perfect focus point
+
 	void Render(const hittable& world)
 	{
 		Initialize();
@@ -42,6 +50,9 @@ private:
 	vec3 pixelDeltaU;
 	vec3 pixelDeltaV;
 	double pixelSampleScale;
+	vec3 u, v, w; //camera frame basis vectors
+	vec3 defocusDiskU;
+	vec3 defocusDiskV;
 
 
 	void Initialize()
@@ -51,21 +62,30 @@ private:
 
 		pixelSampleScale = 1.0 / samplePerPixel;  
 
-		center = point3(0, 0, 0);
+		center = lookFrom;
 
 		//Viewport
-		auto focalLength = 1.0; //distance between camera and viewport
-		auto viewportHeight = 2.0;
+		auto theta = DegreeToRadians(vFov);
+		auto h = std::tan(theta / 2);
+		auto viewportHeight = 2* h * focusDist;
 		auto viewportWidth = viewportHeight * (double(imageWidth) / imageHeight);
 
-		auto viewportU = vec3(viewportWidth, 0, 0);
-		auto viewportV = vec3(0, -viewportHeight, 0);
+		w = UnitVector(lookFrom - lookAt);
+		u = UnitVector(Cross(viewUp, w));
+		v = Cross(w, u);
+
+		auto viewportU = viewportWidth * u;
+		auto viewportV = viewportHeight * -v;
 		pixelDeltaU = viewportU / imageWidth;
 		pixelDeltaV = viewportV / imageHeight;
 
 		//location of the upper left pixel
-		auto viewportUpperLeft = center - vec3(0, 0, focalLength) - viewportU / 2 - viewportV / 2;
+		auto viewportUpperLeft = center - (focusDist * w) - viewportU/2 - viewportV/2;
 		pixel00Loc = viewportUpperLeft + 0.5 * (pixelDeltaU + pixelDeltaV);
+
+		auto defocusRadius = focusDist * std::tan(DegreeToRadians(defocusAngle / 2));
+		defocusDiskU = u * defocusRadius;
+		defocusDiskV = v * defocusRadius;
 	}
 
 	color RayColor(const ray& r,int depth, const hittable& world)const
@@ -94,12 +114,12 @@ private:
 
 	ray GetRay(int i, int j) const
 	{
-		//randomly sample point around the pixel location i,j
+		//create a ray originating from the defocus disk and direct at a ramdom point around the pixel i, j
 
 		auto offset = SampleSquare();
 		auto pixelSample = pixel00Loc + ((i + offset.x()) * pixelDeltaU) + ((j + offset.y()) * pixelDeltaV);
 
-		auto rayOrigin = center;
+		auto rayOrigin = (defocusAngle <= 0) ? center : DefocusDiskSample();
 		auto rayDirection = pixelSample - rayOrigin;
 
 		return ray(rayOrigin, rayDirection);
@@ -108,5 +128,11 @@ private:
 	vec3 SampleSquare() const
 	{
 		return vec3(RandomDouble() - 0.5, RandomDouble() - 0.5, 0);
+	}
+
+	point3 DefocusDiskSample() const
+	{
+		auto p = RandomInUnitDisk();
+		return center + (p[0] * defocusDiskU) + (p[1] * defocusDiskV);
 	}
 };
