@@ -27,7 +27,7 @@ public:
 			scatterDirection = rec.normal;
 		}
 
-		scattered = ray(rec.p, scatterDirection);
+		scattered = ray(rec.p, scatterDirection, rayIn.Time());
 		attenuation = albedo;
 		return true;
 	 }
@@ -46,7 +46,7 @@ public:
 	{
 		vec3 reflected = Reflect(rayIn.Direction(), rec.normal);
 		reflected = UnitVector(reflected) + (fuzz * RandomUnitVector());
-		scattered = ray(rec.p, reflected);
+		scattered = ray(rec.p, reflected, rayIn.Time());
 		attenuation = albedo;
 		return Dot(scattered.Direction(), rec.normal) > 0;
 
@@ -80,7 +80,7 @@ public:
 		else
 			direction = Refract(unitDirection, rec.normal, ri);
 
-		scattered = ray(rec.p, direction);
+		scattered = ray(rec.p, direction, rayIn.Time());
 		return true;
 	}
 

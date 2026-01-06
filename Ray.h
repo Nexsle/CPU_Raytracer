@@ -6,10 +6,13 @@ class ray
 public:
 	ray() {}
 
-	ray(const vec3& origin, const vec3& direction) : orig(origin), dir(direction) {}
+	ray(const vec3& origin, const vec3& direction, double time) : orig(origin), dir(direction), time(time) {}
+
+	ray(const vec3& origin, const vec3& direction) : ray(origin, direction, 0) {}
 
 	const point3& Origin() const { return orig; }
 	const vec3& Direction() const { return dir; }
+	double Time() const { return time; }
 
 	//ray is function P(t)=A+tb
 	//where P is a 3D position along a line in 3D. A is the ray origin and b is the ray direction
@@ -21,4 +24,5 @@ public:
 private:
 	point3 orig;
 	vec3 dir;
-};
+	double time;
+};  
