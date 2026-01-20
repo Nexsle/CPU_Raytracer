@@ -1,5 +1,6 @@
 #pragma once
 #include "rtweekend.h"
+#include "AABB.h"
 
 class material;
 
@@ -29,4 +30,6 @@ public:
 	virtual ~hittable() = default;
 
 	virtual bool hit(const ray& ray, interval rayT, hitRecord& rec) const = 0;
+
+	virtual aabb BoundingBox() const = 0;
 };
