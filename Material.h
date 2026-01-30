@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Hittable.h"
+#include "Texture.h"
 
 class material
 {
@@ -16,7 +17,9 @@ public:
 class lambertian : public material
 {
 public:
-	lambertian(const color& albedo) :albedo(albedo) {}
+	lambertian(const color& albedo) : tex(make_shared<solidColor>(albedo)) {}
+
+	lambertian(shared_ptr<texture> tex) : tex(tex) {}
 
 	bool scatter(const ray& rayIn, const hitRecord& rec, color& attenuation, ray& scattered) const override
 	{
@@ -28,13 +31,13 @@ public:
 		}
 
 		scattered = ray(rec.p, scatterDirection, rayIn.Time());
-		attenuation = albedo;
+		attenuation = tex->Value(rec.u, rec.v, rec.p);
 		return true;
 	 }
 
 
 private:
-	color albedo;
+	shared_ptr<texture> tex;
 };
 
 class metal : public material

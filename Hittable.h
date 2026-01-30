@@ -11,6 +11,8 @@ public:
 	vec3 normal;
 	shared_ptr<material> mat;
 	double t;
+	double u; // Texture coords
+	double v;
 	bool frontFace;
 
 	void SetFaceNormal(const ray& r, const vec3& outwardNormal)

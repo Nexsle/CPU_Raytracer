@@ -54,9 +54,19 @@ public:
 		rec.p = ray.At(rec.t);
 		vec3 outwardNormal = (rec.p - currentCenter) / radius;
 		rec.SetFaceNormal(ray, outwardNormal);
+		GetSphereUV(outwardNormal, rec.u, rec.v);
 		rec.mat = mat;
 
 		return true;
+	}
+
+	static void GetSphereUV(const point3& p, double& u, double& v)
+	{
+		auto theta = std::acos(-p.y());
+		auto phi = std::atan2(-p.z(), p.x()) + pi;
+
+		u = phi / (2 * pi);
+		v = theta / pi;
 	}
 
 	aabb BoundingBox() const override { return bbox; }
