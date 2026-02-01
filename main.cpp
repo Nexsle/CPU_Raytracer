@@ -130,6 +130,32 @@ void Earth()
 	cam.Render(hittableList(globe));
 }
 
+void PerlinSpheres()
+{
+	hittableList world;
+	auto pertext = make_shared<noiseTexture>(4);
+
+	world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, make_shared<lambertian>(pertext)));
+	world.add(make_shared<sphere>(point3(0, 2, 0), 2, make_shared<lambertian>(pertext)));
+	
+	camera cam;
+
+	cam.aspectRatio = 16.0 / 9.0;
+	cam.imageWidth = 400;
+	cam.samplePerPixel = 100;
+	cam.maxDepth = 50;
+
+	cam.vFov = 20;
+	cam.lookFrom = point3(13, 2, 3);
+	cam.lookAt = point3(0, 0, 0);
+	cam.viewUp = point3(0, 1, 0);
+
+	cam.defocusAngle = 0;
+	cam.focusDist = 10.0;
+
+	cam.Render(world);
+}
+
 int main(int argc, char* argv[])
 {
 	auto scene = argc > 1 ? std::atoi(argv[1]) : 1;
@@ -138,6 +164,7 @@ int main(int argc, char* argv[])
 	case 1: BouncingSpheres(); break;
 	case 2: CheckeredSpheres(); break;
 	case 3: Earth(); break;
+	case 4: PerlinSpheres(); break;
 	default: BouncingSpheres(); break;
 	}
 }

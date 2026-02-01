@@ -1,6 +1,7 @@
 #pragma once
 #include "rtweekend.h"
 #include "rtw_stb_image.h"
+#include "Perlin.h"
 class texture
 {
 public:
@@ -74,4 +75,20 @@ public:
 	}
 private:
 	rtwImage image;
+};
+
+class noiseTexture : public texture
+{
+public: 
+	noiseTexture(double scale) : scale(scale) {}
+	
+	color Value(double u, double v, const point3& p) const override
+	{
+		/*return color(1, 1, 1) * noise.Turb(p, 7);*/
+		return color(.5, .5, .5) * (1 + std::sin(scale * p.z() + 10 * noise.Turb(p, 7)));
+	}
+
+private:
+	perlin noise;
+	double scale;
 };
