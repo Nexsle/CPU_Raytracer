@@ -81,6 +81,7 @@ private:
 
 	static double PerlinInterp(const vec3 c[2][2][2], double u, double v, double w)
 	{
+		//smoothstep formula
 		auto uu = u * u * (3 - 2 * u);
 		auto vv = v * v * (3 - 2 * v);
 		auto ww = w * w * (3 - 2 * w);

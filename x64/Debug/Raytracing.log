@@ -1,2 +1,6 @@
 ﻿  main.cpp
-  Raytracing.vcxproj -> C:\Users\nguye\OneDrive - University of Wollongong\UniWork\Code\OpenGL\Raytracing\x64\Debug\Raytracing.exe
+C:\Users\nguye\OneDrive - University of Wollongong\UniWork\Code\OpenGL\Raytracing\Raytracing\rtw_stb_image.h(22,19): error C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  (compiling source file 'main.cpp')
+  
+  Quad.h
+  Generating Code...

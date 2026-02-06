@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Quad.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />

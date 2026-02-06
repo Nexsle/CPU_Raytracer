@@ -7,6 +7,7 @@
 #include "Material.h"
 #include "BVH.h"
 #include "Texture.h"
+#include "Quad.h"
 
 void BouncingSpheres() 
 {
@@ -156,6 +157,42 @@ void PerlinSpheres()
 	cam.Render(world);
 }
 
+void Quads()
+{
+	hittableList world;
+
+	//mat
+	auto leftRed = make_shared<lambertian>(color(1.0, 0.2, 0.2));
+	auto backGreen = make_shared<lambertian>(color(0.2, 1.0, 1.0));
+	auto rightBlue = make_shared<lambertian>(color(0.2, 0.2, 1.0));
+	auto upperOrange = make_shared<lambertian>(color(1.0, 0.5, 0.0));
+	auto lowerTeal = make_shared<lambertian>(color(0.2, 0.8, 0.0));
+
+	world.add(make_shared<quad>(point3(-3, -2, 5), vec3(0, 0, -4), vec3(0, 4, 0), leftRed));
+	world.add(make_shared<quad>(point3(-2, -2, 0), vec3(4, 0, 0), vec3(0, 4, 0), lowerTeal));
+	world.add(make_shared<quad>(point3(3, -2, 1), vec3(0, 0, 4), vec3(0, 4, 0), rightBlue));
+	world.add(make_shared<quad>(point3(-2, 3, 1), vec3(4, 0, 0), vec3(0, 0, 4), upperOrange));
+	world.add(make_shared<quad>(point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4), backGreen));
+
+
+	camera cam;
+
+	cam.aspectRatio = 16.0 / 9.0;
+	cam.imageWidth = 400;
+	cam.samplePerPixel = 100;
+	cam.maxDepth = 50;
+
+	cam.vFov = 80;
+	cam.lookFrom = point3(0, 0, 9);
+	cam.lookAt = point3(0, 0, 0);
+	cam.viewUp = point3(0, 1, 0);
+
+	cam.defocusAngle = 0;
+	cam.focusDist = 10.0;
+
+	cam.Render(world);
+}
+
 int main(int argc, char* argv[])
 {
 	auto scene = argc > 1 ? std::atoi(argv[1]) : 1;
@@ -165,6 +202,7 @@ int main(int argc, char* argv[])
 	case 2: CheckeredSpheres(); break;
 	case 3: Earth(); break;
 	case 4: PerlinSpheres(); break;
+	case 5: Quads(); break;
 	default: BouncingSpheres(); break;
 	}
 }
