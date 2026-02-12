@@ -12,6 +12,11 @@ public:
 	{
 		return false;
 	}
+
+	virtual color Emmited(double u, double v, const point3& p) const
+	{
+		return color(0, 0, 0);
+	}
 };
 
 class lambertian : public material
@@ -97,4 +102,18 @@ private:
 		r0 = r0 * r0;
 		return r0 + (1 - r0) * std::pow((1 - cosine), 5);
 	}
+};
+
+class diffuseLight : public material
+{
+public:
+	diffuseLight(shared_ptr<texture> tex) : tex(tex) {}
+	diffuseLight(const color& emit) : tex(make_shared<solidColor>(emit)) {}
+
+	color Emmited(double u, double v, const point3& p) const override
+	{
+		return tex->Value(u, v, p);
+	}
+private:
+	shared_ptr<texture> tex;
 };

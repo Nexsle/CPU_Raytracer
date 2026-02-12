@@ -9,6 +9,7 @@ public:
 	int imageWidth = 100;
 	int samplePerPixel = 10; //num of random sample per pixel
 	int maxDepth = 10; //max num of ray bounces
+	color background;
 
 	double vFov = 90; //vertical view angle
 	point3 lookFrom = point3(0, 0, 0);
@@ -94,22 +95,21 @@ private:
 			return color(0, 0, 0);
 
 		hitRecord rec;
-		if (world.hit(r, interval(0.001, +infinity), rec))
+		if (!world.hit(r, interval(0.001, +infinity), rec))
+			return background;
+
+		ray scattered;
+		color attenuation;
+		color colorFromEmmission = rec.mat->Emmited(rec.u, rec.v, rec.p);
+
+		if (!rec.mat->scatter(r, rec, attenuation, scattered))
 		{
-			ray scattered;
-			color attenuation;
-			if (rec.mat->scatter(r, rec, attenuation, scattered))
-			{
-				return attenuation * RayColor(scattered, depth - 1, world);
-			}
-			return color(0, 0, 0);
+			return colorFromEmmission;
 		}
 
+		color colorFromScatter = attenuation * RayColor(scattered, depth - 1, world);
 
-		//Sky gradient if no hit
-		vec3 unitDirection = UnitVector(r.Direction());
-		auto a = 0.5 * (unitDirection.y() + 1.0f);
-		return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
+		return colorFromEmmission + colorFromScatter;
 	}
 
 	ray GetRay(int i, int j) const

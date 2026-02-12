@@ -67,6 +67,7 @@ void BouncingSpheres()
 	cam.imageWidth = 400;
 	cam.samplePerPixel = 100;
 	cam.maxDepth = 50;
+	cam.background = color(0.7, 0.8, 1.0);
 
 	cam.vFov = 20;
 	cam.lookFrom = point3(13, 2, 3);
@@ -94,6 +95,7 @@ void CheckeredSpheres()
 	cam.imageWidth = 400;
 	cam.samplePerPixel = 100;
 	cam.maxDepth = 50;
+	cam.background = color(0.7, 0.8, 1.0);
 
 	cam.vFov = 20;
 	cam.lookFrom = point3(13, 2, 3);
@@ -119,6 +121,7 @@ void Earth()
 	cam.imageWidth = 400;
 	cam.samplePerPixel = 100;
 	cam.maxDepth = 50;
+	cam.background = color(0.7, 0.8, 1.0);
 
 	cam.vFov = 20;
 	cam.lookFrom = point3(0, 0, 12);
@@ -145,6 +148,7 @@ void PerlinSpheres()
 	cam.imageWidth = 400;
 	cam.samplePerPixel = 100;
 	cam.maxDepth = 50;
+	cam.background = color(0.7, 0.8, 1.0);
 
 	cam.vFov = 20;
 	cam.lookFrom = point3(13, 2, 3);
@@ -181,10 +185,88 @@ void Quads()
 	cam.imageWidth = 400;
 	cam.samplePerPixel = 100;
 	cam.maxDepth = 50;
+	cam.background = color(0.7, 0.8, 1);
 
 	cam.vFov = 80;
 	cam.lookFrom = point3(0, 0, 9);
 	cam.lookAt = point3(0, 0, 0);
+	cam.viewUp = point3(0, 1, 0);
+
+	cam.defocusAngle = 0;
+	cam.focusDist = 10.0;
+
+	cam.Render(world);
+}
+
+void SimpleLight()
+{
+	hittableList world;
+	
+	auto pertext = make_shared<noiseTexture>(4);
+	world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, make_shared<lambertian>(pertext)));
+	world.add(make_shared<sphere>(point3(0, 2, 0), 2, make_shared<lambertian>(pertext)));
+
+
+	auto difflight = make_shared<diffuseLight>(color(4, 4, 4));
+	world.add(make_shared<quad>(point3(3, 1, -2), vec3(2, 0, 0), vec3(0, 2, 0), difflight));
+	world.add(make_shared<sphere>(point3(0, 7, 0), 2, difflight));
+
+	camera cam;
+
+	cam.aspectRatio = 16.0 / 9.0;
+	cam.imageWidth = 400;
+	cam.samplePerPixel = 100;
+	cam.maxDepth = 50;
+	cam.background = color(0, 0, 0);
+
+	cam.vFov = 20;
+	cam.lookFrom = point3(26, 3, 9);
+	cam.lookAt = point3(0, 2, 0);
+	cam.viewUp = point3(0, 1, 0);
+
+	cam.defocusAngle = 0;
+	cam.focusDist = 10.0;
+
+	cam.Render(world);
+}
+
+void CornellBox()
+{
+	hittableList world;
+
+	auto red = make_shared<lambertian>(color(.65, .05, .05));
+	auto white = make_shared<lambertian>(color(.73, .73, .73));
+	auto green = make_shared<lambertian>(color(.12, .45, .15));
+	auto light = make_shared<diffuseLight>(color(15, 15, 15));
+
+	world.add(make_shared<quad>(point3(555, 0, 0), vec3(0, 555, 0), vec3(0, 0, 555), green));
+	world.add(make_shared<quad>(point3(0, 0, 0), vec3(0, 555, 0), vec3(0, 0, 555), red));
+	world.add(make_shared<quad>(point3(343, 554, 332), vec3(-130, 0, 0), vec3(0, 0, -105), light));
+	world.add(make_shared<quad>(point3(0, 0, 0), vec3(555, 0, 0), vec3(0, 0, 555), white));
+	world.add(make_shared<quad>(point3(555, 555, 555), vec3(-555, 0, 0), vec3(0, 0, -555), white));
+	world.add(make_shared<quad>(point3(0, 0, 555), vec3(555, 0, 0), vec3(0, 555, 0), white));
+
+	shared_ptr<hittable> box1 = Box(point3(0, 0, 0), point3(165, 330, 165), white);
+	box1 = make_shared<rotateY>(box1, 15);
+	box1 = make_shared<translate>(box1, vec3(265, 0, 295));
+	world.add(box1);
+
+	shared_ptr<hittable> box2 = Box(point3(0, 0, 0), point3(165, 165, 165), white);
+	box2 = make_shared<rotateY>(box2, -18);
+	box2 = make_shared<translate>(box2, vec3(130, 0, 65));
+	world.add(box2);
+
+	camera cam;
+
+	cam.aspectRatio = 1.0;
+	cam.imageWidth = 600;
+	cam.samplePerPixel = 100;
+	cam.maxDepth = 50;
+	cam.background = color(0, 0, 0);
+
+	cam.vFov = 40;
+	cam.lookFrom = point3(278, 278, -800);
+	cam.lookAt = point3(278, 278, 0);
 	cam.viewUp = point3(0, 1, 0);
 
 	cam.defocusAngle = 0;
@@ -203,6 +285,8 @@ int main(int argc, char* argv[])
 	case 3: Earth(); break;
 	case 4: PerlinSpheres(); break;
 	case 5: Quads(); break;
+	case 6: SimpleLight(); break;
+	case 7: CornellBox(); break;
 	default: BouncingSpheres(); break;
 	}
 }
