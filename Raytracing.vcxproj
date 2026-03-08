@@ -131,6 +131,7 @@
     <ClInclude Include="BVH.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="ConstantMedium.h" />
     <ClInclude Include="Hittable.h" />
     <ClInclude Include="Hittable_List.h" />
     <ClInclude Include="Interval.h" />
