@@ -2,18 +2,17 @@
 ## Project Description
 A CPU-based raytracer written in C++ based on *Ray Tracing in One Weekend*. The program output the result in a ppm image format. Features include:
 - Simple primitives: sphere, quads
-- Materials: lambertian, metal, dielectric, diffuse light, 
-- Textures: solid color, Perlin noise, image texture
+- Materials: lambertian, metal, dielectric, diffuse light, isotropic
+- Textures: solid color, checker, Perlin noise, image texture
 - Bounding volume hierarchy: accelerate ray-object intersection
 - Depth of field
 - Volumetric fog
-- Matrix transformation
+- Transforms: translation and Y-axis rotation
 - Motion blur
 ## Example
-![[Pasted image 20260312150202.png]]
+![testImage](generatedImages/testImage.png)
 
-
-![[Pasted image 20260312150229.png]]
+![final_scene](generatedImages/final_scene.png)
 ## Building
 
 ### CMake
@@ -26,8 +25,8 @@ cmake --build .
 
 Run with an optional scene number argument:
 
-```bash
-./Raytracing [scene] > output.ppm
+```powershell
+.\Raytracing.exe [scene] | Out-File -Encoding ASCII output.ppm
 ```
 
 | Scene       | Description                                      |
